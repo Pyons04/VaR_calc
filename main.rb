@@ -40,7 +40,7 @@ class SimuratedReturn < Array
   def initialize(ave:, stdv:, times:)
     result = []
      # normsdist = Distribution::Normal.new(ave, stdv)
-     normsdist = NormalDistribution.new(ave, stdv)
+      normsdist = NormalDistribution.new(ave, stdv)
     times.times do
       result << normsdist.rng
     end
@@ -68,17 +68,17 @@ end
 class CallOption < Array
   def vals
     {
-      strike: 24500r,
-      riskFree: 0.05r,
-      volatility: 0.25r,
-      maturity: (0.25 - 1/260)
+      strike: 24500,
+      riskFree: 0.05,
+      volatility: 0.25,
+      maturity: 0.25
     }
   end
   def initialize (sampleIndex:, latestPrice:)
     @historialLatest = latestPrice
     results = []
     sampleIndex.each do |samplePrice|
-      results << BlackScholes::equation(vals: vals, samplePrice: samplePrice)
+      results << BlackScholes::equation(vals: vals.merge({maturity: 0.25 - (1/260r)}), samplePrice: samplePrice)
     end
     self.replace(results)
   end
@@ -110,7 +110,7 @@ puts
 simurated = SimuratedReturn.new(
   ave: historical.returns.average,
   stdv: historical.returns.stdv,
-  times: 30000
+  times: 50000
 )
 
 p 'シュミレーション平均: ' + simurated.average.to_s
@@ -127,7 +127,7 @@ callOptionPrices = CallOption.new(
   sampleIndex: sampleIndex,
   latestPrice: historical.last
 )
-p '最新のコールオプション価格' + BlackScholes::equation(vals: callOptionPrices.vals, samplePrice: historical.last).to_s
+p '最新のコールオプション価格: ' + BlackScholes::equation(vals: callOptionPrices.vals, samplePrice: historical.last).to_s
 puts 
 
 p 'コールオプション平均: ' + callOptionPrices.average.to_s
