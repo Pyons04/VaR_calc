@@ -1,22 +1,26 @@
-Simuration Executed Date,2019-12-21 22:38:39 +0900
+Simuration Executed Date,2019-12-21 23:27:07 +0900
 "",Simuration Result
-HistoricalData Average,0.0007668784209101001
-HistoricalData Stdv,0.01350745223645546
-HistoricalData Sample Size,1000
-
-Simulated Return Average,0.0007335160301806623
-Simulated Return Stdv,0.013603478142148849
-""
-Simulated Security Price Average,24273.08164403168
-Simulated Security Price Stdv ,329.95630734648154
-""
+"",""
+Historical Data Average,18111.14784215784
+Historical Data Stdv,4707.502176909612
+"",""
+Historical Return Data Average,0.0007668784209101001
+Historical Return Data Stdv,0.01350745223645546
+Historical Return Data Sample Size,1000
+"",""
+Simulated Return Average,0.0008399411364121944
+Simulated Return Stdv,0.013534535769149694
+"",""
+Simulated Security Price Average,24275.66301584661
+Simulated Security Price Stdv ,328.28409009609885
+"",""
 Latest Call Option Price,1237.3353711756408
-""
-Simulated Call Option Price Average,1242.432571267758
-Simulated Call Option Price Stdv,176.34964145962087
-""
-Simulated Call Option Return Average,0.0041194976001325745
-Simulated Call Option Return Stdv,0.14252372118972415
-""
-1 Day 95% VaR,-23.168599910826604%
-1 Day 99% VaR,-32.79607727719247%
+"",""
+Simulated Call Option Price Average,1243.7379030975924
+Simulated Call Option Price Stdv,175.68752331194406
+"",""
+Simulated Call Option Return Average,0.005174451544101862
+Simulated Call Option Return Stdv,0.14198860503358637
+"",""
+1 Day 95% VaR,-22.97456954839668%
+1 Day 99% VaR,-32.56589981841544%
