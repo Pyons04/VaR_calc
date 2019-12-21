@@ -1,7 +1,6 @@
 
 require 'csv'
-require 'rubystats'  # 統計ライブラリ
-
+require 'rubystats'
 class Array
   def average 
     return (self.sum.to_f / self.length.to_f)
@@ -35,13 +34,22 @@ class PriceDate < Array
   end
 end
 
+module BoxMuller
+  @generate = Random.new
+  def randum(ave, stdv)
+    normSDist = Math.sqrt(-2.0 * Math.log(@generate.rand)) * Math.sin(2.0 * Math::PI * @generate.rand)
+    return ave + (stdv * normSDist) 
+  end
+  module_function :randum
+end
+
 class SimuratedReturn < Array
 
   def initialize(ave:, stdv:, times:)
     result = []
-     # normsdist = Distribution::Normal.new(ave, stdv)
-      normsdist = NormalDistribution.new(ave, stdv)
+    normsdist = NormalDistribution.new(ave, stdv)
     times.times do
+    # result << BoxMuller::randum(ave,stdv)
       result << normsdist.rng
     end
     self.replace(result)
@@ -55,12 +63,21 @@ class SimuratedReturn < Array
   end
 end
 
+module NormSDist
+  def cdf(x)
+    return (1 + Math::erf(x/Math::sqrt(2)))/2
+  end
+  module_function :cdf
+end
+
+
+
 module BlackScholes
   def equation(vals:, samplePrice:)
-    normsdist = NormalDistribution.new(0, 1)
+    # normsdist = NormalDistribution.new(0, 1)
     d1 = (Math.log(samplePrice / vals[:strike]) + (vals[:riskFree] + 0.5 * (vals[:volatility] ** 2) ) * vals[:maturity]) /  (vals[:volatility] * Math.sqrt(vals[:maturity]))
     d2 = d1 - vals[:volatility] * Math.sqrt(vals[:maturity])
-    return (samplePrice * normsdist.cdf(d1) - vals[:strike] * Math::E ** (-vals[:riskFree] * vals[:maturity]) * normsdist.cdf(d2))
+    return (samplePrice * NormSDist::cdf(d1) - vals[:strike] * Math::E ** (-vals[:riskFree] * vals[:maturity]) * NormSDist::cdf(d2))
   end
   module_function :equation
 end
