@@ -1,6 +1,6 @@
 
 require 'csv'
-require 'rubystats'  # Ruby向け外部統計ライブラリ
+require 'rubystats'  # Ruby向け外部統計ライブラリ'rubystats'を利用して累積分布関数や正規分布に即したランダム変数を生成している。
 
 class Array
   def average 
