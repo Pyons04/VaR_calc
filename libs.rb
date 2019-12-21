@@ -1,6 +1,4 @@
-
 require 'csv'
-require 'rubystats'
 class Array
   def average 
     return (self.sum.to_f / self.length.to_f)
@@ -44,13 +42,10 @@ module BoxMuller
 end
 
 class SimuratedReturn < Array
-
   def initialize(ave:, stdv:, times:)
     result = []
-    normsdist = NormalDistribution.new(ave, stdv)
     times.times do
-    # result << BoxMuller::randum(ave,stdv)
-      result << normsdist.rng
+      result << BoxMuller::randum(ave,stdv)
     end
     self.replace(result)
   end
@@ -70,11 +65,8 @@ module NormSDist
   module_function :cdf
 end
 
-
-
 module BlackScholes
   def equation(vals:, samplePrice:)
-    # normsdist = NormalDistribution.new(0, 1)
     d1 = (Math.log(samplePrice / vals[:strike]) + (vals[:riskFree] + 0.5 * (vals[:volatility] ** 2) ) * vals[:maturity]) /  (vals[:volatility] * Math.sqrt(vals[:maturity]))
     d2 = d1 - vals[:volatility] * Math.sqrt(vals[:maturity])
     return (samplePrice * NormSDist::cdf(d1) - vals[:strike] * Math::E ** (-vals[:riskFree] * vals[:maturity]) * NormSDist::cdf(d2))
@@ -108,45 +100,3 @@ class CallOption < Array
     return result
   end
 end
-
-priceData = CSV.read("./data.csv").map{|x| x[1] }
-historical = PriceDate.new(priceData)
-
-p 'ヒストリカルデータ平均: ' +  historical.returns.average.to_s
-p 'ヒストリカルデータ標準偏差: ' + historical.returns.stdv.to_s
-p 'ヒストリカルデータ最新価格: ' + historical.last.to_s
-puts 
-
-simurated = SimuratedReturn.new(
-  ave: historical.returns.average,
-  stdv: historical.returns.stdv,
-  times: 50000
-)
-
-p 'シュミレーション平均: ' + simurated.average.to_s
-p 'シュミレーション標準偏差: ' + simurated.stdv.to_s
-puts 
-
-p 'サンプルインデックス価格平均: ' + simurated.sampleIndex(historical.last).average.to_s
-p 'サンプルインデックス価格標準偏差: ' + simurated.sampleIndex(historical.last).stdv.to_s
-puts
-
-sampleIndex = simurated.sampleIndex(historical.last)
-
-callOptionPrices = CallOption.new(
-  sampleIndex: sampleIndex,
-  latestPrice: historical.last
-)
-p '最新のコールオプション価格: ' + BlackScholes::equation(vals: callOptionPrices.vals, samplePrice: historical.last).to_s
-puts 
-
-p 'コールオプション平均: ' + callOptionPrices.average.to_s
-p 'コールオプション標準偏差: ' + callOptionPrices.stdv.to_s
-puts
-
-p 'コールオプションリターン平均 : ' + callOptionPrices.returns.average.to_s
-p 'コールオプションリターン標準偏差: ' + callOptionPrices.returns.stdv.to_s
-puts
-
-puts '1 Day 95% VaR :' + ((callOptionPrices.returns.average - 1.6545 * callOptionPrices.returns.stdv) * 100).to_s + '%'
-puts '1 Day 99% VaR :' + ((callOptionPrices.returns.average - 2.33 * callOptionPrices.returns.stdv) * 100).to_s + '%'
