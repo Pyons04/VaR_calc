@@ -1,13 +1,14 @@
-# require './libs'
-require './libs_with_rubystats'
+ require './libs'
+ require './libs_with_rubystats'
+ include WithRubyStats
 
 priceData = CSV.read("./data.csv").map{|x| x[1] }
 historical = PriceDate.new(priceData)
+csv_export = [["Simuration Executed Date", Time.now.to_s],["","Simuration Result"]]
 
-p 'ヒストリカルデータ平均: ' +  historical.returns.average.to_s
-p 'ヒストリカルデータ標準偏差: ' + historical.returns.stdv.to_s
-p 'ヒストリカルデータ最新価格: ' + historical.last.to_s
-puts 
+csv_export << ['HistoricalData Average', historical.returns.average]
+csv_export << ['HistoricalData Stdv', historical.returns.stdv]
+csv_export << []
 
 simurated = SimuratedReturn.new(
   ave: historical.returns.average,
@@ -15,30 +16,37 @@ simurated = SimuratedReturn.new(
   times: 50000
 )
 
-p 'シュミレーション平均: ' + simurated.average.to_s
-p 'シュミレーション標準偏差: ' + simurated.stdv.to_s
-puts 
+csv_export << ['Simulated Return Average', simurated.average]
+csv_export << ['Simulated Return Stdv',simurated.stdv.to_s]
+csv_export << []
 
-p 'サンプルインデックス価格平均: ' + simurated.sampleIndex(historical.last).average.to_s
-p 'サンプルインデックス価格標準偏差: ' + simurated.sampleIndex(historical.last).stdv.to_s
-puts
-
-sampleIndex = simurated.sampleIndex(historical.last)
+csv_export << ['Simulated Security Price Average', simurated.sampleIndex(historical.last).average]
+csv_export << ['Simulated Security Price Stdv ', simurated.sampleIndex(historical.last).stdv]
+csv_export << []
 
 callOptionPrices = CallOption.new(
-  sampleIndex: sampleIndex,
+  sampleIndex: simurated.sampleIndex(historical.last),
   latestPrice: historical.last
 )
-p '最新のコールオプション価格: ' + BlackScholes::equation(vals: callOptionPrices.vals, samplePrice: historical.last).to_s
-puts 
 
-p 'コールオプション平均: ' + callOptionPrices.average.to_s
-p 'コールオプション標準偏差: ' + callOptionPrices.stdv.to_s
-puts
+csv_export << ['Latest Call Option Price', BlackScholes::equation(vals: callOptionPrices.vals, samplePrice: historical.last)]
+csv_export << []
 
-p 'コールオプションリターン平均 : ' + callOptionPrices.returns.average.to_s
-p 'コールオプションリターン標準偏差: ' + callOptionPrices.returns.stdv.to_s
-puts
+csv_export << ['Simulated Call Option Price Average', callOptionPrices.average]
+csv_export << ['Simulated Call Option Price Stdv', callOptionPrices.stdv]
+csv_export << []
 
-puts '1 Day 95% VaR :' + ((callOptionPrices.returns.average - 1.6545 * callOptionPrices.returns.stdv) * 100).to_s + '%'
-puts '1 Day 99% VaR :' + ((callOptionPrices.returns.average - 2.33 * callOptionPrices.returns.stdv) * 100).to_s + '%'
+csv_export << ['Simulated Call Option Return Average', callOptionPrices.returns.average]
+csv_export << ['Simulated Call Option Return Stdv', callOptionPrices.returns.stdv]
+csv_export << []
+
+csv_export << [ '1 Day 95% VaR', ((callOptionPrices.returns.average - 1.6545 * callOptionPrices.returns.stdv) * 100).to_s + '%']
+csv_export << [ '1 Day 99% VaR', ((callOptionPrices.returns.average - 2.33 * callOptionPrices.returns.stdv) * 100).to_s + '%']
+
+CSV.open('val_simuration_result.csv','w+') do |content|
+  csv_export.each do |row|
+    content << row 
+  end
+end
+
+puts "Done!"

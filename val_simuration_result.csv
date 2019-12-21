@@ -1,0 +1,21 @@
+Simuration Executed Date,2019-12-21 21:48:44 +0900
+"",Simuration Result
+HistoricalData Average,0.0007668784209101001
+HistoricalData Stdv,0.01350745223645546
+
+Simulated Return Average,0.0007806954915317997
+Simulated Return Stdv,0.01347463775319519
+
+Simulated Security Price Average,24274.225995548797
+Simulated Security Price Stdv ,326.83124634869773
+
+Latest Call Option Price,1237.3353711756408
+
+Simulated Call Option Price Average,1242.908327892282
+Simulated Call Option Price Stdv,174.81844563957742
+
+Simulated Call Option Return Average,0.004503998549193781
+Simulated Call Option Return Stdv,0.14128622660602966
+
+1 Day 95% VaR,-22.92540633704823%
+1 Day 99% VaR,-32.46929094428553%

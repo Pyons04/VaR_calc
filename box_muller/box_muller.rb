@@ -2,7 +2,6 @@ require '../libs'
 require 'csv'
 
 array = []
-generate = Random.new
 50000.times do 
   array << BoxMuller::randum(0,1)
 end
@@ -10,7 +9,7 @@ end
 ave =  ["Mean of Samples", array.average]
 stdv = ["Stdv of Samples", array.stdv]
 
-nd_table_half = ["Samles greater than 0", array.select{|x| (0 <= x) }.size / array.size.to_f]
+nd_table_half = ["Rate of Samples greater than 0", array.select{|x| (0 <= x) }.size / array.size.to_f]
 nd_table_x = [["Standard Normal Distribution Table",""]]
 
 z = 0.0
